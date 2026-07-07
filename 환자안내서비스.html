@@ -310,6 +310,13 @@
             height: 32px;
         }
 
+        .card-icon-img {
+            width: 46px;
+            height: 46px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
         /* Card Textual structure */
         .card-details {
             flex-grow: 1;
@@ -494,13 +501,8 @@
             <!-- Card 1: 환자이동방법 -->
             <a href="https://drive.google.com/file/d/1q3mBPe-dbLXVIcSutDsPFi9QBuGY70-v/view" target="_blank" rel="noopener noreferrer" class="menu-card card-blue" id="btn-patient-movement">
                 <div class="icon-container icon-blue">
-                    <!-- Helper assisted wheeling icon with custom gradient -->
-                    <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="9" cy="5" r="2" fill="url(#blueGrad)" />
-                        <path d="M9 11.5a1.5 1.5 0 0 1 1.4-1.1l3.5.5a1.5 1.5 0 0 1 1.2 1.1l1.4 4.5" stroke="url(#blueGrad)" stroke-width="2.5" stroke-linecap="round"/>
-                        <path d="M12.5 13.5 10 17H7.5" stroke="url(#blueGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M14 17a4 4 0 1 1-8 0" stroke="url(#blueGrad)" stroke-width="2.5" stroke-linecap="round"/>
-                    </svg>
+                    <!-- Custom generated illustration for patient mobility -->
+                    <img src="images/patient_mobility.png" alt="환자이동방법 아이콘" class="card-icon-img">
                 </div>
                 <div class="card-details">
                     <span class="card-badge badge-blue">매뉴얼 가이드</span>
@@ -517,12 +519,8 @@
             <!-- Card 2: 네뷸라이저 사용법 교육동영상 -->
             <a href="https://drive.google.com/file/d/1eoJc8I47B7dUMKpOZ_JBbqonAZGYNgzc/view" target="_blank" rel="noopener noreferrer" class="menu-card card-teal" id="btn-nebulizer-guide">
                 <div class="icon-container icon-teal">
-                    <!-- Video Play inside Medical cross/screen -->
-                    <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="2" y="5" width="15" height="14" rx="3" stroke="url(#tealGrad)" stroke-width="2.5"/>
-                        <path d="M22 8L17 12L22 16V8Z" fill="url(#tealGrad)" stroke="url(#tealGrad)" stroke-width="2" stroke-linejoin="round"/>
-                        <polygon points="7 9 12 12 7 15" fill="url(#tealGrad)"/>
-                    </svg>
+                    <!-- Custom generated illustration for nebulizer guide -->
+                    <img src="images/nebulizer_guide.png" alt="네뷸라이저 사용법 아이콘" class="card-icon-img">
                 </div>
                 <div class="card-details">
                     <span class="card-badge badge-teal">교육 동영상</span>
@@ -539,12 +537,8 @@
             <!-- Card 3: 하지근력운동 -->
             <a href="https://drive.google.com/file/d/1Wkedx1hKEpxMvDUKrfE54iT_CgOqBZps/view" target="_blank" rel="noopener noreferrer" class="menu-card card-orange" id="btn-leg-exercise">
                 <div class="icon-container icon-orange">
-                    <!-- Leg stretching rehabilitation graphic -->
-                    <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="5" r="2" fill="url(#orangeGrad)" />
-                        <path d="m7 15 3-3 3 2.5 4-2" stroke="url(#orangeGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="m9 22 2-6 2-3 2 5" stroke="url(#orangeGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                    <!-- Custom generated illustration for leg exercise -->
+                    <img src="images/leg_exercise.png" alt="하지근력운동 아이콘" class="card-icon-img">
                 </div>
                 <div class="card-details">
                     <span class="card-badge badge-orange">재활 및 운동</span>
@@ -561,12 +555,8 @@
             <!-- Card 4: 간호간병통합서비스 안내 -->
             <a href="https://m.site.naver.com/1Ykuv" target="_blank" rel="noopener noreferrer" class="menu-card card-purple" id="btn-nursing-service">
                 <div class="icon-container icon-purple">
-                    <!-- Caring Shield with Medical heart -->
-                    <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 22S20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" fill="url(#purpleGrad)" opacity="0.1"/>
-                        <path d="M12 22S20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" stroke="url(#purpleGrad)" stroke-width="2.5" stroke-linejoin="round"/>
-                        <path d="M12 8V14M9 11H15" stroke="url(#purpleGrad)" stroke-width="3" stroke-linecap="round"/>
-                    </svg>
+                    <!-- Custom generated illustration for nursing care -->
+                    <img src="images/nursing_care.png" alt="간호간병통합서비스 아이콘" class="card-icon-img">
                 </div>
                 <div class="card-details">
                     <span class="card-badge badge-purple">공식 안내 서비스</span>
