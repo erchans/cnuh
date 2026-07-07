@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>충남대학교병원 병원생활 안내 | 모바일 가이드</title>
+    <meta name="description" content="충남대학교병원을 찾아주신 환자 및 보호자를 위한 병원생활 모바일 가이드라인입니다. 환자이동방법, 네뷸라이저 사용법, 하지근력운동 및 간호간병통합서비스를 편리하게 확인하세요.">
+    
+    <!-- Google Fonts: Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Modern Design System & Variables */
+        :root {
+            /* CNUH Brand Colors (Navy & Teal) */
+            --cnuh-blue: #0A3B73;       /* CNUH Deep Navy */
+            --cnuh-teal: #00A896;       /* CNUH Bright Teal Green */
+            
+            --primary: #0A3B73;
+            --primary-light: rgba(10, 59, 115, 0.06);
+            --primary-border: rgba(10, 59, 115, 0.12);
+            
+            --teal: #00A896;
+            --teal-light: rgba(0, 168, 150, 0.06);
+            --teal-border: rgba(0, 168, 150, 0.12);
+            
+            --orange: #E67E22;
+            --orange-light: rgba(230, 126, 34, 0.06);
+            --orange-border: rgba(230, 126, 34, 0.12);
+            
+            --purple: #8B5CF6;
+            --purple-light: rgba(139, 92, 246, 0.06);
+            --purple-border: rgba(139, 92, 246, 0.12);
+            
+            --text-main: #0F172A;     /* Slate 900 */
+            --text-sub: #334155;      /* Slate 700 */
+            --text-mute: #64748B;     /* Slate 500 */
+            
+            --bg-page: #F8FAFC;       /* Soft clinic white */
+            --bg-card: #FFFFFF;
+            
+            --radius-card: 24px;
+            --radius-inner: 16px;
+            --radius-pill: 100px;
+            
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            letter-spacing: -0.03em;
+        }
+
+        body {
+            background-color: #E2E8F0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* App Mockup Wrapper (Mobile-first viewport container) */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            background-color: var(--bg-page);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 24px;
+            box-shadow: 0 0 50px rgba(15, 23, 42, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Ambient background glow elements for premium detail */
+        .app-container::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            right: -20%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(0, 168, 150, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .app-container::after {
+            content: '';
+            position: absolute;
+            bottom: 5%;
+            left: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(10, 59, 115, 0.06) 0%, rgba(255, 255, 255, 0) 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Responsive Frame for Desktop/Tablet view */
+        @media (min-width: 481px) {
+            body {
+                padding: 20px;
+            }
+            .app-container {
+                min-height: 840px;
+                height: 840px;
+                border-radius: 48px;
+                border: 12px solid #0F172A;
+                box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35);
+            }
+            
+            /* Camera Notch for iPhone frame look */
+            .app-container-notch {
+                position: absolute;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 140px;
+                height: 25px;
+                background-color: #0F172A;
+                border-bottom-left-radius: 16px;
+                border-bottom-right-radius: 16px;
+                z-index: 10;
+            }
+        }
+
+        /* Header UI Block */
+        .header {
+            position: relative;
+            z-index: 2;
+            margin-top: 12px;
+            margin-bottom: 28px;
+            text-align: center;
+            animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Logo badge */
+        .logo-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F1F5F9 100%);
+            border: 1px solid rgba(10, 59, 115, 0.15);
+            padding: 8px 16px;
+            border-radius: var(--radius-pill);
+            box-shadow: 0 4px 10px rgba(10, 59, 115, 0.06);
+            margin-bottom: 18px;
+        }
+
+        .logo-icon-svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .logo-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--cnuh-blue);
+            letter-spacing: 0.05em;
+        }
+
+        .title {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.35;
+            margin-bottom: 12px;
+            letter-spacing: -0.04em;
+        }
+
+        .subtitle-box {
+            background-color: rgba(10, 59, 115, 0.04);
+            border-radius: 12px;
+            padding: 8px 12px;
+            display: inline-block;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-sub);
+            line-height: 1.4;
+        }
+
+        /* Cards Layout */
+        .menu-list {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex-grow: 1;
+            justify-content: flex-start;
+        }
+
+        /* Detailed Card UI styling */
+        .menu-card {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-card);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: var(--radius-card);
+            padding: 22px 20px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+            transition: var(--transition);
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Ambient colored background highlights for glassmorphic pop */
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.2) 100%);
+            z-index: -1;
+        }
+
+        /* Active action (Tap feedback) */
+        .menu-card:active {
+            transform: scale(0.96) translateY(2px) !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        /* Subtle glowing card drop shadows per topic */
+        .card-blue {
+            border-left: 6px solid var(--cnuh-blue);
+            box-shadow: 0 10px 20px -8px rgba(10, 59, 115, 0.12);
+        }
+        .card-teal {
+            border-left: 6px solid var(--cnuh-teal);
+            box-shadow: 0 10px 20px -8px rgba(0, 168, 150, 0.12);
+        }
+        .card-orange {
+            border-left: 6px solid var(--orange);
+            box-shadow: 0 10px 20px -8px rgba(230, 126, 34, 0.12);
+        }
+        .card-purple {
+            border-left: 6px solid var(--purple);
+            box-shadow: 0 10px 20px -8px rgba(139, 92, 246, 0.12);
+        }
+
+        /* Hover configurations */
+        @media (hover: hover) {
+            .menu-card:hover {
+                transform: translateY(-4px);
+                border-color: rgba(10, 59, 115, 0.15);
+            }
+            .card-blue:hover { box-shadow: 0 14px 28px -4px rgba(10, 59, 115, 0.2); }
+            .card-teal:hover { box-shadow: 0 14px 28px -4px rgba(0, 168, 150, 0.2); }
+            .card-orange:hover { box-shadow: 0 14px 28px -4px rgba(230, 126, 34, 0.2); }
+            .card-purple:hover { box-shadow: 0 14px 28px -4px rgba(139, 92, 246, 0.2); }
+            
+            .menu-card:hover .arrow-circle {
+                transform: translateX(4px);
+                background-color: var(--cnuh-blue);
+                color: #FFFFFF;
+            }
+        }
+
+        /* Card Icon design with radial light base */
+        .icon-container {
+            width: 62px;
+            height: 62px;
+            border-radius: var(--radius-inner);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 18px;
+            flex-shrink: 0;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8), 0 4px 10px rgba(0, 0, 0, 0.04);
+        }
+
+        .icon-blue {
+            background: radial-gradient(circle at center, #FFFFFF 0%, var(--primary-light) 120%);
+            border: 1px solid var(--primary-border);
+        }
+        .icon-teal {
+            background: radial-gradient(circle at center, #FFFFFF 0%, var(--teal-light) 120%);
+            border: 1px solid var(--teal-border);
+        }
+        .icon-orange {
+            background: radial-gradient(circle at center, #FFFFFF 0%, var(--orange-light) 120%);
+            border: 1px solid var(--orange-border);
+        }
+        .icon-purple {
+            background: radial-gradient(circle at center, #FFFFFF 0%, var(--purple-light) 120%);
+            border: 1px solid var(--purple-border);
+        }
+
+        .card-icon-svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .card-icon-img {
+            width: 46px;
+            height: 46px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        /* Card Textual structure */
+        .card-details {
+            flex-grow: 1;
+            text-align: left;
+            padding-right: 8px;
+        }
+
+        /* Type Pill Badge inside Card */
+        .card-badge {
+            display: inline-flex;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            letter-spacing: 0;
+        }
+
+        .badge-blue { background-color: var(--primary-light); color: var(--cnuh-blue); }
+        .badge-teal { background-color: var(--teal-light); color: var(--cnuh-teal); }
+        .badge-orange { background-color: var(--orange-light); color: var(--orange); }
+        .badge-purple { background-color: var(--purple-light); color: var(--purple); }
+
+        .card-title {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 5px;
+            line-height: 1.35;
+        }
+
+        .card-desc {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-mute);
+            line-height: 1.4;
+        }
+
+        /* Interactive Navigation Arrow circle */
+        .arrow-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #F1F5F9;
+            color: var(--text-mute);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .arrow-svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2.5;
+        }
+
+        /* Custom Hover Color indicators */
+        .card-blue:hover .arrow-circle { background-color: var(--cnuh-blue); color: #FFFFFF; }
+        .card-teal:hover .arrow-circle { background-color: var(--cnuh-teal); color: #FFFFFF; }
+        .card-orange:hover .arrow-circle { background-color: var(--orange); color: #FFFFFF; }
+        .card-purple:hover .arrow-circle { background-color: var(--purple); color: #FFFFFF; }
+
+        /* Clean Footer without calls */
+        .footer {
+            margin-top: 36px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .info-disclaimer {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-sub);
+            margin-bottom: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            justify-content: center;
+        }
+
+        .info-disclaimer svg {
+            width: 14px;
+            height: 14px;
+            color: var(--cnuh-blue);
+        }
+
+        .copyright-box {
+            border-top: 1px solid rgba(226, 232, 240, 0.8);
+            padding-top: 14px;
+        }
+
+        .copyright {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-mute);
+            line-height: 1.5;
+        }
+
+        /* Cascading Load Animations */
+        .menu-card:nth-child(1) { animation-delay: 0.15s; }
+        .menu-card:nth-child(2) { animation-delay: 0.28s; }
+        .menu-card:nth-child(3) { animation-delay: 0.40s; }
+        .menu-card:nth-child(4) { animation-delay: 0.52s; }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(28px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SVG Colors/Gradients Registry (No visual footprint, controls card icon fills) -->
+    <svg style="display: none;">
+        <defs>
+            <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#2563EB" />
+                <stop offset="100%" stop-color="#0A3B73" />
+            </linearGradient>
+            <linearGradient id="tealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#2DD4BF" />
+                <stop offset="100%" stop-color="#00A896" />
+            </linearGradient>
+            <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#F59E0B" />
+                <stop offset="100%" stop-color="#D97706" />
+            </linearGradient>
+            <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#A78BFA" />
+                <stop offset="100%" stop-color="#6D28D9" />
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <div class="app-container" id="app-root">
+        <!-- Physical notch display on desktop -->
+        <div class="app-container-notch"></div>
+        
+        <!-- Header Section -->
+        <header class="header" id="main-header">
+            <!-- CNUH stylized brand badge -->
+            <div class="logo-box">
+                <!-- Custom CNUH style abstract flower/cross icon -->
+                <svg class="logo-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z" fill="#0A3B73" opacity="0.15"/>
+                    <path d="M12 7V17M7 12H17" stroke="#00A896" stroke-width="3" stroke-linecap="round"/>
+                    <circle cx="12" cy="12" r="3" fill="#0A3B73"/>
+                </svg>
+                <span class="logo-text">충남대학교병원</span>
+            </div>
+            
+            <h1 class="title">병원생활 안내</h1>
+            <div class="subtitle-box">
+                <p class="subtitle">확인하시려는 안내 항목을 선택해주세요.</p>
+            </div>
+        </header>
+
+        <!-- Main Cards List -->
+        <main class="menu-list">
+            
+            <!-- Card 1: 환자이동방법 -->
+            <a href="https://drive.google.com/file/d/1q3mBPe-dbLXVIcSutDsPFi9QBuGY70-v/view" target="_blank" rel="noopener noreferrer" class="menu-card card-blue" id="btn-patient-movement">
+                <div class="icon-container icon-blue">
+                    <!-- Custom generated illustration for patient mobility -->
+                    <img src="images/patient_mobility.png" alt="환자이동방법 아이콘" class="card-icon-img">
+                </div>
+                <div class="card-details">
+                    <span class="card-badge badge-blue">매뉴얼 가이드</span>
+                    <h2 class="card-title">환자이동방법</h2>
+                    <p class="card-desc">안전하고 올바른 낙상 방지 환자 이송법</p>
+                </div>
+                <div class="arrow-circle">
+                    <svg class="arrow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="m9 18 6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- Card 2: 네뷸라이저 사용법 교육동영상 -->
+            <a href="https://drive.google.com/file/d/1eoJc8I47B7dUMKpOZ_JBbqonAZGYNgzc/view" target="_blank" rel="noopener noreferrer" class="menu-card card-teal" id="btn-nebulizer-guide">
+                <div class="icon-container icon-teal">
+                    <!-- Custom generated illustration for nebulizer guide -->
+                    <img src="images/nebulizer_guide.png" alt="네뷸라이저 사용법 아이콘" class="card-icon-img">
+                </div>
+                <div class="card-details">
+                    <span class="card-badge badge-teal">교육 동영상</span>
+                    <h2 class="card-title">네뷸라이저 사용법 교육동영상</h2>
+                    <p class="card-desc">영상을 통해 배우는 올바른 흡입 치료</p>
+                </div>
+                <div class="arrow-circle">
+                    <svg class="arrow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="m9 18 6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- Card 3: 하지근력운동 -->
+            <a href="https://drive.google.com/file/d/1Wkedx1hKEpxMvDUKrfE54iT_CgOqBZps/view" target="_blank" rel="noopener noreferrer" class="menu-card card-orange" id="btn-leg-exercise">
+                <div class="icon-container icon-orange">
+                    <!-- Custom generated illustration for leg exercise -->
+                    <img src="images/leg_exercise.png" alt="하지근력운동 아이콘" class="card-icon-img">
+                </div>
+                <div class="card-details">
+                    <span class="card-badge badge-orange">재활 및 운동</span>
+                    <h2 class="card-title">하지근력운동</h2>
+                    <p class="card-desc">근감소증 방지를 위한 병상 스트레칭</p>
+                </div>
+                <div class="arrow-circle">
+                    <svg class="arrow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="m9 18 6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- Card 4: 간호간병통합서비스 안내 -->
+            <a href="https://m.site.naver.com/1Ykuv" target="_blank" rel="noopener noreferrer" class="menu-card card-purple" id="btn-nursing-service">
+                <div class="icon-container icon-purple">
+                    <!-- Custom generated illustration for nursing care -->
+                    <img src="images/nursing_care.png" alt="간호간병통합서비스 아이콘" class="card-icon-img">
+                </div>
+                <div class="card-details">
+                    <span class="card-badge badge-purple">공식 안내 서비스</span>
+                    <h2 class="card-title">간호간병통합서비스 안내</h2>
+                    <p class="card-desc">보호자가 필요 없는 원스톱 전문 안심 간병</p>
+                </div>
+                <div class="arrow-circle">
+                    <svg class="arrow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="m9 18 6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </a>
+
+        </main>
+
+        <!-- Footer Section -->
+        <footer class="footer" id="main-footer">
+            <div class="info-disclaimer">
+                <!-- Lock / Verified icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                <span>충남대학교병원 공식 스마트 환자 가이드</span>
+            </div>
+            <div class="copyright-box">
+                <p class="copyright">본 모바일 웹페이지는 QR코드용 안심 링크로 동작합니다.<br>© CHUNGNAM NATIONAL UNIVERSITY HOSPITAL.</p>
+            </div>
+        </footer>
+
+    </div>
+
+</body>
+</html>
