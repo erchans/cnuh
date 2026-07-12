@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>준영이네 자산관리 - 스마트 자산 관리 가계부</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- ApexCharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="glow-bg">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo-icon">
+                    <i data-lucide="trending-up" class="pulse-icon"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>준영이네 자산관리</h1>
+                    <p class="subtitle">스마트 자산 관리 및 실시간 주식 대시보드</p>
+                </div>
+            </div>
+            
+            <div class="header-controls">
+                <!-- 환율 설정 -->
+                <div class="control-card exchange-rate-card">
+                    <div class="control-label">
+                        <i data-lucide="globe"></i>
+                        <span>오늘의 환율 (USD/KRW)</span>
+                    </div>
+                    <div class="control-input-group">
+                        <input type="number" id="exchange-rate-input" value="1350" min="500" max="3000" step="0.5">
+                        <span class="currency-unit">₩</span>
+                    </div>
+                </div>
+
+                <!-- 실시간 표시기 -->
+                <div class="live-indicator-card">
+                    <div class="indicator-dot-wrapper">
+                        <span class="indicator-dot pulse"></span>
+                        <span class="indicator-text">LIVE시세 연동 중</span>
+                    </div>
+                    <div id="simulation-timer" class="sim-timer">다음 갱신 5.0초</div>
+                </div>
+
+                <!-- 시세 및 환율 새로고침 버튼 -->
+                <button id="btn-refresh-prices" class="btn btn-primary btn-sm" style="height: 34px; padding: 0 0.75rem; display: flex; align-items: center; gap: 0.35rem;" title="시세 및 환율 새로고침">
+                    <i data-lucide="refresh-cw" id="icon-refresh-spinner"></i>
+                    <span>시세 갱신</span>
+                </button>
+
+                <!-- 데이터 초기화 및 리셋 -->
+                <button id="btn-reset-data" class="btn btn-icon-only text-danger" title="데이터 초기화">
+                    <i data-lucide="rotate-ccw"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- DASHBOARD GRID -->
+        <main class="dashboard-grid">
+            
+            <!-- LEFT COLUMN: TOTAL ASSET & BUDGET OVERVIEW -->
+            <section class="grid-col col-sidebar">
+                <!-- TOTAL ASSET CARD -->
+                <div class="card premium-asset-card">
+                    <div class="card-header-simple">
+                        <span class="card-label">순자산 현황</span>
+                        <div class="tax-badge" id="tax-alert-badge" title="양도세 면세 범위">
+                            면세 대상
+                        </div>
+                    </div>
+                    <div class="asset-value-wrapper">
+                        <h2 class="total-asset-value" id="total-asset-val">₩0</h2>
+                        <div class="asset-change-row">
+                            <span class="change-label">투자 손익</span>
+                            <span class="change-value text-emerald" id="total-return-val">+₩0 (+0.00%)</span>
+                        </div>
+                    </div>
+                    <div class="asset-breakdown">
+                        <div class="breakdown-item">
+                            <div class="item-label">
+                                <span class="dot dot-krw"></span>
+                                <span>현금</span>
+                            </div>
+                            <span class="item-value" id="cash-krw-val">₩0</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="item-label">
+                                <span class="dot dot-stocks"></span>
+                                <span>주식 평가액</span>
+                            </div>
+                            <span class="item-value" id="stocks-krw-val">₩0</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="item-label">
+                                <span class="dot" style="background-color: #a855f7;"></span>
+                                <span>부동산 자산</span>
+                            </div>
+                            <span class="item-value" id="real-estate-krw-val">₩0</span>
+                        </div>
+                        <div class="breakdown-item" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.5rem; margin-top: 0.5rem;">
+                            <div class="item-label">
+                                <span class="dot" style="background-color: #f43f5e;"></span>
+                                <span>총 부채</span>
+                            </div>
+                            <span class="item-value text-coral" id="debts-krw-val">₩0</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="item-label">
+                                <span class="dot" style="background-color: #10b981;"></span>
+                                <span>총 자산</span>
+                            </div>
+                            <span class="item-value" id="total-gross-asset-val" style="font-weight: 700;">₩0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CAPITAL GAINS TAX CARD -->
+                <div class="card tax-card">
+                    <div class="card-title">
+                        <i data-lucide="calculator" class="text-indigo"></i>
+                        <h3>해외 주식 예상 양도소득세</h3>
+                    </div>
+                    <div class="tax-body">
+                        <div class="tax-row">
+                            <span>연간 누적 실현손익</span>
+                            <strong id="tax-profit-val">₩0</strong>
+                        </div>
+                        <div class="tax-row" style="flex-direction: column; align-items: flex-start; gap: 0.35rem;">
+                            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                                <span>이전 매매 수익 합산</span>
+                                <strong id="tax-historical-total">₩0</strong>
+                            </div>
+                            <div id="tax-profit-entries-list" style="width: 100%; max-height: 120px; overflow-y: auto;"></div>
+                            <div style="display: flex; gap: 0.25rem; width: 100%; margin-top: 0.15rem;">
+                                <input type="text" id="tax-entry-desc" placeholder="설명 (예: 1분기 실현수익)" style="flex: 1; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-family: Outfit; font-size: 0.7rem; padding: 0.2rem 0.35rem; outline: none;">
+                                <input type="number" id="tax-entry-amount" placeholder="금액" style="width: 90px; text-align: right; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-family: Outfit; font-size: 0.7rem; padding: 0.2rem 0.35rem; outline: none;">
+                                <button type="button" class="btn btn-emerald btn-xs" id="btn-add-tax-entry" style="padding: 0.2rem 0.5rem; font-size: 0.65rem;">추가</button>
+                            </div>
+                        </div>
+                        <div class="tax-row">
+                            <span>기본 공제액</span>
+                            <span class="text-muted">₩2,500,000</span>
+                        </div>
+                        <div class="tax-divider"></div>
+                        <div class="tax-row highlight">
+                            <span>예상 세액 (22%)</span>
+                            <strong class="text-coral" id="tax-due-val">₩0</strong>
+                        </div>
+                        <p class="tax-info-text">
+                            * 해외 주식 양도소득세는 연간 수익 250만 원을 초과한 부분에 대해 22%가 부과됩니다. (손익 통산 적용)
+                        </p>
+                    </div>
+                </div>
+
+                <!-- WEEKLY BUDGET CONTROL CARD -->
+                <div class="card budget-card">
+                    <div class="card-title-action">
+                        <div class="card-title">
+                            <i data-lucide="wallet" class="text-amber"></i>
+                            <h3>주간 예산 통제 (Control)</h3>
+                        </div>
+                        <button class="btn btn-text btn-xs" id="btn-edit-budget">설정</button>
+                    </div>
+                    
+                    <div class="budget-body">
+                        <div class="budget-info-row">
+                            <div>
+                                <span class="budget-desc">이번 주 지출</span>
+                                <div class="budget-spent-large"><span id="budget-spent-val">₩0</span> <span class="slash">/</span> <span id="budget-limit-val" class="text-muted">₩200,000</span></div>
+                            </div>
+                            <span class="budget-percent" id="budget-percent-val">0%</span>
+                        </div>
+                        <div class="budget-progress-bar">
+                            <div class="progress-fill" id="budget-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <div class="budget-footer-row">
+                            <span id="budget-status-text" class="text-emerald">안정적인 지출 수준을 유지 중입니다.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MIDDLE COLUMN: PORTFOLIO & LEDGER SYSTEM (TABBED) -->
+            <section class="grid-col col-main">
+                <!-- MEGA MAIN TABS NAVIGATION -->
+                <div class="main-tabs-nav" style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; background: var(--bg-card); backdrop-filter: var(--glass-blur); border: 1px solid var(--border-color); padding: 0.4rem; border-radius: 12px; box-shadow: var(--card-shadow); flex-wrap: wrap;">
+                    <button type="button" class="btn btn-text btn-sm active" id="btn-main-tab-stocks" style="flex: 1; min-width: 80px; justify-content: center; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="trending-up" style="width:16px; height:16px;"></i>주식</button>
+                    <button type="button" class="btn btn-text btn-sm" id="btn-main-tab-cash" style="flex: 1; min-width: 80px; justify-content: center; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="coins" style="width:16px; height:16px;"></i>현금</button>
+                    <button type="button" class="btn btn-text btn-sm" id="btn-main-tab-real-estate" style="flex: 1; min-width: 80px; justify-content: center; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="home" style="width:16px; height:16px;"></i>부동산</button>
+                    <button type="button" class="btn btn-text btn-sm" id="btn-main-tab-ledger" style="flex: 1; min-width: 80px; justify-content: center; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="book-open" style="width:16px; height:16px;"></i>가계부</button>
+                    <button type="button" class="btn btn-text btn-sm" id="btn-main-tab-debts" style="flex: 1; min-width: 80px; justify-content: center; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="credit-card" style="width:16px; height:16px;"></i>부채</button>
+                </div>
+
+                <!-- 1. STOCKS TAB PANEL -->
+                <div id="main-tab-panel-stocks" class="main-tab-panel">
+                    <!-- STOCK PORTFOLIO -->
+                    <div class="card portfolio-card">
+                        <div class="card-title-action" style="margin-bottom: 0.5rem;">
+                            <div class="card-title">
+                                <i data-lucide="bar-chart-2" class="text-emerald"></i>
+                                <h3>주식 포트폴리오 (STOCKS PORTFOLIO)</h3>
+                            </div>
+                            <div class="portfolio-tabs" style="display: flex; gap: 0.25rem;">
+                                <button type="button" class="btn btn-text btn-xs active" id="btn-port-tab-holdings">현재 보유 주식</button>
+                                <button type="button" class="btn btn-text btn-xs" id="btn-port-tab-trades">매매 기록 (실현손익)</button>
+                            </div>
+                        </div>
+
+                        <!-- Market Sub-Tabs (Overseas vs Domestic vs All) -->
+                        <div class="market-tabs" style="display: flex; gap: 0.35rem; margin-bottom: 1rem; background: rgba(255,255,255,0.02); padding: 0.3rem; border-radius: 8px; border: 1px solid var(--border-color); max-width: 340px;">
+                            <button type="button" class="btn btn-text btn-xs active" id="btn-market-tab-overseas" style="flex: 1; justify-content: center; display: flex; align-items: center; gap: 0.3rem;">
+                                <i data-lucide="globe" style="width: 12px; height: 12px;"></i>해외주식
+                            </button>
+                            <button type="button" class="btn btn-text btn-xs" id="btn-market-tab-domestic" style="flex: 1; justify-content: center; display: flex; align-items: center; gap: 0.3rem;">
+                                <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i>국내주식
+                            </button>
+                            <button type="button" class="btn btn-text btn-xs" id="btn-market-tab-all" style="flex: 1; justify-content: center; display: flex; align-items: center; gap: 0.3rem;">
+                                <i data-lucide="layers" style="width: 12px; height: 12px;"></i>모아보기
+                            </button>
+                        </div>
+
+                        <!-- Tab 1: Holdings Section -->
+                        <div id="portfolio-holdings-section">
+                            <div class="card-title-action" style="margin-bottom: 0.5rem; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                                    <!-- 계좌 필터 버튼 그룹 (JS에서 동적 렌더링) -->
+                                    <div class="account-filter-container" id="holdings-acc-filter-container" style="display: flex; gap: 0.25rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 0.2rem; border-radius: 8px;">
+                                        <button type="button" class="btn btn-text btn-xs active" id="btn-acc-filter-all">계좌 모아보기</button>
+                                    </div>
+                                    <button type="button" class="btn btn-secondary btn-xs" id="btn-toggle-acc-manager" style="display: flex; align-items: center; gap: 0.25rem; padding: 0.35rem 0.6rem;"><i data-lucide="settings" style="width:12px; height:12px;"></i>계좌 관리</button>
+                                </div>
+                                <button class="btn btn-primary btn-xs" id="btn-show-stock-form">
+                                    <i data-lucide="plus"></i> 보유 주식 추가
+                                </button>
+                            </div>
+                            
+                            <!-- Account Manager Panel (Toggleable) -->
+                            <div class="collapsible-form" id="acc-manager-wrapper" style="display: none; margin-bottom: 0.75rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 8px;">
+                                <h4 style="font-size: 0.8rem; margin-bottom: 0.5rem; color: var(--text-primary);">주식 계좌 관리</h4>
+                                <!-- Add New Account Form -->
+                                <div class="form-group" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                    <input type="text" id="new-acc-name-input" placeholder="새 계좌 이름 입력 (예: 미래에셋 ISA)" style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-family: Outfit; font-size: 0.8rem; padding: 0.35rem 0.5rem; flex: 1; outline: none;">
+                                    <button type="button" class="btn btn-emerald btn-xs" id="btn-add-new-account" style="padding: 0.35rem 0.75rem;">추가</button>
+                                </div>
+                                <!-- Account List Manager -->
+                                <div id="acc-manager-list-container" style="max-height: 150px; overflow-y: auto;">
+                                    <!-- JS에서 계좌 수정/삭제 목록 주입 -->
+                                </div>
+                            </div>
+                            
+                            <!-- Add Stock Form (Toggleable) -->
+                            <div class="collapsible-form" id="stock-form-wrapper" style="display: none;">
+                                <form id="stock-add-form" class="form-grid">
+                                    <div class="form-group">
+                                        <label for="stock-ticker">티커 (Ticker) <span class="required">*</span></label>
+                                        <input type="text" id="stock-ticker" placeholder="예: AAPL, TSLA" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stock-buy-price">구입 평균가 (₩) <span class="required">*</span></label>
+                                        <input type="number" id="stock-buy-price" min="1" step="any" placeholder="0" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stock-qty">보유 수량 <span class="required">*</span></label>
+                                        <input type="number" id="stock-qty" min="0.0001" step="any" placeholder="0" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stock-account">계좌 구분</label>
+                                        <select id="stock-account" style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-family: Outfit; font-size: 0.85rem; padding: 0.5rem; outline: none; width: 100%;">
+                                            <!-- JS에서 동적 로드 -->
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stock-sector">투자 자산군</label>
+                                        <input type="text" id="stock-sector" placeholder="예: IT, 금융, 채권, 테크">
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-stock">취소</button>
+                                        <button type="submit" class="btn btn-emerald btn-sm">추가</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Stock Table Container -->
+                            <div class="table-container">
+                                <table class="premium-table" id="stock-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="sortable" id="th-ticker">종목명/티커 <span class="sort-icon"></span></th>
+                                            <th class="sortable" id="th-sector">자산군 <span class="sort-icon"></span></th>
+                                            <th class="sortable text-right" id="th-buy-price">매수단가 (₩) <span class="sort-icon"></span></th>
+                                            <th class="sortable text-right" id="th-qty">수량 <span class="sort-icon"></span></th>
+                                            <th class="sortable text-right" id="th-buy-cost">매수금액 (₩) <span class="sort-icon"></span></th>
+                                            <th class="sortable text-right" id="th-current-price">현재가 (₩) <span class="sort-icon"></span></th>
+                                            <th class="sortable text-right" id="th-eval-price">평가금액 (₩) <span class="sort-icon"></span></th>
+                                            <th class="sortable text-right" id="th-profit-price">평가손익 (₩) <span class="sort-icon"></span></th>
+                                            <th class="sortable text-right" id="th-yield">수익률 <span class="sort-icon"></span></th>
+                                            <th class="text-center">관리</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stock-list-tbody">
+                                        <!-- JS에서 동적 삽입 -->
+                                    </tbody>
+                                    <tfoot style="border-top: 2px solid var(--border-color); background: rgba(15, 23, 42, 0.6); font-weight: bold;">
+                                        <tr>
+                                            <td>합계</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td class="text-right" id="stock-total-buy-cost">₩0</td>
+                                            <td></td>
+                                            <td class="text-right" id="stock-total-eval-cost">₩0</td>
+                                            <td class="text-right font-family-outfit font-semibold" id="stock-total-profit">₩0</td>
+                                            <td class="text-right font-family-outfit font-bold" id="stock-total-yield">0.00%</td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Tab 2: Trades Section -->
+                        <div id="portfolio-trades-section" style="display: none;">
+                            <div class="card-title-action" style="margin-bottom: 0.5rem; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                                <!-- 계좌 필터 버튼 그룹 (매매용 - JS에서 동적 렌더링) -->
+                                <div class="account-filter-container-trade" id="trades-acc-filter-container" style="display: flex; gap: 0.25rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 0.2rem; border-radius: 8px;">
+                                    <button type="button" class="btn btn-text btn-xs active" id="btn-trade-filter-all">계좌 모아보기</button>
+                                </div>
+                                <button class="btn btn-primary btn-xs" id="btn-show-trade-form">
+                                    <i data-lucide="plus"></i> 매매 기록 추가
+                                </button>
+                            </div>
+                            
+                            <!-- Add Trade Form (Toggleable) -->
+                            <div class="collapsible-form" id="trade-form-wrapper" style="display: none;">
+                                <form id="trade-add-form" class="form-grid">
+                                    <div class="form-group">
+                                        <label for="trade-type">구분</label>
+                                        <select id="trade-type" required>
+                                            <option value="buy">매수 (Buy)</option>
+                                            <option value="sell">매도 (Sell)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="trade-date">거래 일자 <span class="required">*</span></label>
+                                        <input type="date" id="trade-date" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="trade-ticker">티커 (Ticker) <span class="required">*</span></label>
+                                        <input type="text" id="trade-ticker" placeholder="예: AAPL" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="trade-qty">거래 수량 <span class="required">*</span></label>
+                                        <input type="number" id="trade-qty" min="0.0001" step="any" placeholder="0" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="trade-price" id="trade-price-label">단가 (USD $) <span class="required">*</span></label>
+                                        <input type="number" id="trade-price" min="0.01" step="any" placeholder="0.00" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="trade-account">계좌 구분</label>
+                                        <select id="trade-account" style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-family: Outfit; font-size: 0.85rem; padding: 0.5rem; outline: none; width: 100%;">
+                                            <!-- JS에서 동적 로드 -->
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="trade-sector">투자 자산군</label>
+                                        <input type="text" id="trade-sector" placeholder="예: IT, 금융, 채권, 테크">
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-trade">취소</button>
+                                        <button type="submit" class="btn btn-amber btn-sm">기록</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Trades Table Container -->
+                            <div class="table-container">
+                                <table class="premium-table" id="trades-table">
+                                    <thead>
+                                        <tr>
+                                            <th>거래일자</th>
+                                            <th>구분</th>
+                                            <th>티커</th>
+                                            <th class="text-right">수량</th>
+                                            <th class="text-right">거래단가 ($)</th>
+                                            <th class="text-right">총 거래금액 ($)</th>
+                                            <th class="text-center">삭제</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="trade-list-tbody">
+                                        <!-- JS에서 동적 삽입 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. CASH TAB PANEL -->
+                <div id="main-tab-panel-cash" class="main-tab-panel" style="display: none;">
+                    <div class="card cash-adjust-card">
+                        <div class="card-title-action" style="margin-bottom: 0.5rem;">
+                            <div class="card-title">
+                                <i data-lucide="coins" class="text-amber"></i>
+                                <h3>현금 잔고 관리</h3>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-xs" id="btn-add-cash-account" style="display: flex; align-items: center; gap: 0.25rem;"><i data-lucide="plus" style="width:14px; height:14px;"></i> 현금 계좌 추가</button>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 1rem; border-radius: 10px; text-align: center; margin-bottom: 1rem;">
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 500;">총 현금 잔고</div>
+                            <div style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary); margin-top: 0.35rem;" id="cash-tab-total-val">₩0</div>
+                        </div>
+                        <div id="cash-acc-form-wrapper" class="collapsible-form" style="display: none; margin-bottom: 0.75rem;">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>계좌명</label>
+                                    <input type="text" id="cash-acc-name-input" placeholder="예: 카카오뱅크, 비상금 통장">
+                                </div>
+                                <div class="form-group">
+                                    <label>잔액 (₩)</label>
+                                    <input type="number" id="cash-acc-amount-input" placeholder="0" min="0">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-secondary btn-xs" id="btn-cancel-cash-acc">취소</button>
+                                    <button type="button" class="btn btn-emerald btn-xs" id="btn-save-cash-acc">추가</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="premium-table" id="cash-accounts-table">
+                                <thead>
+                                    <tr>
+                                        <th>계좌명</th>
+                                        <th class="text-right">잔액 (₩)</th>
+                                        <th class="text-center">관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cash-accounts-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. REAL ESTATE TAB PANEL -->
+                <div id="main-tab-panel-real-estate" class="main-tab-panel" style="display: none;">
+                    <div class="card real-estate-card">
+                        <div class="card-title-action" style="margin-bottom: 0.5rem;">
+                            <div class="card-title">
+                                <i data-lucide="home" class="text-indigo"></i>
+                                <h3>부동산 자산 관리</h3>
+                            </div>
+                            <button class="btn btn-primary btn-xs" id="btn-show-re-form">
+                                <i data-lucide="plus"></i> 부동산 자산 추가
+                            </button>
+                        </div>
+                        
+                        <!-- Add Real Estate Form (Toggleable) -->
+                        <div class="collapsible-form" id="re-form-wrapper" style="display: none;">
+                            <form id="re-add-form" class="form-grid">
+                                <div class="form-group" style="grid-column: span 2;">
+                                    <label for="re-name">부동산 자산명 <span class="required">*</span></label>
+                                    <input type="text" id="re-name" placeholder="예: 마포 래미안 아파트, 상가 빌딩" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="re-buy-price">취득 가액 (원화 ₩) <span class="required">*</span></label>
+                                    <input type="number" id="re-buy-price" min="1" placeholder="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="re-current-price">현재 평가액 (원화 ₩) <span class="required">*</span></label>
+                                    <input type="number" id="re-current-price" min="1" placeholder="0" required>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-re">취소</button>
+                                    <button type="submit" class="btn btn-emerald btn-sm">추가</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Real Estate Table Container -->
+                        <div class="table-container">
+                            <table class="premium-table" id="real-estate-table">
+                                <thead>
+                                    <tr>
+                                        <th>부동산 자산명</th>
+                                        <th class="text-right">취득가액 (₩)</th>
+                                        <th class="text-right">현재 평가액 (₩)</th>
+                                        <th class="text-right">평가손익 (₩)</th>
+                                        <th class="text-right">수익률</th>
+                                        <th class="text-center">관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="real-estate-list-tbody">
+                                    <!-- JS에서 동적 삽입 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="main-tab-panel-ledger" class="main-tab-panel" style="display: none;">
+                    <div class="card ledger-card">
+                        <div class="card-title-action">
+                            <div class="card-title">
+                                <i data-lucide="book-open" class="text-indigo"></i>
+                                <h3>수입 및 지출 내역 (가계부)</h3>
+                            </div>
+                            <button class="btn btn-primary btn-sm" id="btn-show-ledger-form">
+                                <i data-lucide="plus"></i> 수입/지출 입력
+                            </button>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 0.75rem 0; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 0.5rem 0.75rem; border-radius: 10px; flex-wrap: wrap; gap: 0.5rem;">
+                            <div style="display: flex; gap: 0.25rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 0.2rem; border-radius: 8px;">
+                                <button type="button" class="btn btn-text btn-xs active" id="btn-ledger-monthly">월별</button>
+                                <button type="button" class="btn btn-text btn-xs" id="btn-ledger-weekly">주별</button>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <button type="button" id="btn-ledger-prev" style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: 0.25rem;"><i data-lucide="chevron-left" style="width:18px; height:18px;"></i></button>
+                                <span id="ledger-period-label" style="font-family: Outfit; font-size: 0.9rem; font-weight: 600; color: var(--text-primary); min-width: 140px; text-align: center;">2026년 5월</span>
+                                <button type="button" id="btn-ledger-next" style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: 0.25rem;"><i data-lucide="chevron-right" style="width:18px; height:18px;"></i></button>
+                            </div>
+                            <div id="ledger-period-summary" style="display: flex; gap: 1rem; font-size: 0.75rem; font-family: Outfit;">
+                                <span>수입: <strong class="text-emerald" id="ledger-sum-income">₩0</strong></span>
+                                <span>지출: <strong class="text-coral" id="ledger-sum-expense">₩0</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="collapsible-form" id="ledger-form-wrapper" style="display: none;">
+                            <form id="ledger-add-form" class="form-grid">
+                                <div class="form-group">
+                                    <label for="ledger-date">날짜</label>
+                                    <input type="date" id="ledger-date" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ledger-type">구분</label>
+                                    <select id="ledger-type" required>
+                                        <option value="expense">지출 (Expense)</option>
+                                        <option value="income">수입 (Income)</option>
+                                        <option value="invest-in">투자용 이체 (KRW → USD)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ledger-category">카테고리</label>
+                                    <select id="ledger-category" required>
+                                        <option value="식비">식비</option>
+                                        <option value="교통">교통</option>
+                                        <option value="주거/공과금">주거/공과금</option>
+                                        <option value="쇼핑/패션">쇼핑/패션</option>
+                                        <option value="문화/여가">문화/여가</option>
+                                        <option value="기타 지출">기타 지출</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ledger-amount">금액 (원화 ₩ 또는 외화 $)</label>
+                                    <div class="amount-input-wrapper">
+                                        <input type="number" id="ledger-amount" min="1" step="any" placeholder="0" required>
+                                        <select id="ledger-currency" class="currency-select">
+                                            <option value="KRW">₩ (KRW)</option>
+                                            <option value="USD">$ (USD)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="ledger-desc">내역 설명</label>
+                                    <input type="text" id="ledger-desc" placeholder="예: 스타벅스 아메리카노, 5월 급여">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-ledger">취소</button>
+                                    <button type="submit" class="btn btn-indigo btn-sm">기록</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="table-container ledger-table-container">
+                            <table class="premium-table" id="ledger-table">
+                                <thead>
+                                    <tr>
+                                        <th>날짜</th>
+                                        <th>구분</th>
+                                        <th>카테고리</th>
+                                        <th>상세 내역</th>
+                                        <th class="text-right">금액</th>
+                                        <th class="text-center">삭제</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ledger-list-tbody"></tbody>
+                            </table>
+                        </div>
+
+                        <div style="margin-top: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 10px;">
+                            <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="bar-chart-2" style="width:14px; height:14px;"></i> 기간 누적 지출 추이</div>
+                            <div id="ledger-cumul-chart"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. DEBTS TAB PANEL -->
+                <div id="main-tab-panel-debts" class="main-tab-panel" style="display: none;">
+                    <div class="card debts-card">
+                        <div class="card-title-action" style="margin-bottom: 0.5rem;">
+                            <div class="card-title">
+                                <i data-lucide="credit-card" class="text-coral"></i>
+                                <h3>부채 관리</h3>
+                            </div>
+                            <button class="btn btn-primary btn-xs" id="btn-show-debt-form">
+                                <i data-lucide="plus"></i> 부채 추가
+                            </button>
+                        </div>
+                        
+                        <!-- Add Debt Form (Toggleable) -->
+                        <div class="collapsible-form" id="debt-form-wrapper" style="display: none;">
+                            <form id="debt-add-form" class="form-grid">
+                                <div class="form-group" style="grid-column: span 2;">
+                                    <label for="debt-name">부채명 (대출명) <span class="required">*</span></label>
+                                    <input type="text" id="debt-name" placeholder="예: 주택담보대출, 마이너스 통장" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="debt-amount">부채 금액 (원화 ₩) <span class="required">*</span></label>
+                                    <input type="number" id="debt-amount" min="1" placeholder="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="debt-interest">연 이자율 (%) (선택)</label>
+                                    <input type="number" id="debt-interest" min="0" max="100" step="0.01" placeholder="0.00">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-debt">취소</button>
+                                    <button type="submit" class="btn btn-emerald btn-sm">추가</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Debts Table Container -->
+                        <div class="table-container">
+                            <table class="premium-table" id="debts-table">
+                                <thead>
+                                    <tr>
+                                        <th>부채명 (대출명)</th>
+                                        <th class="text-right">부채 금액 (₩)</th>
+                                        <th class="text-right">연 이자율 (%)</th>
+                                        <th class="text-center">관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="debts-list-tbody">
+                                    <!-- JS에서 동적 삽입 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RAW DATA MANAGEMENT (Bulk Import/Export) -->
+                <div class="card raw-data-card" style="margin-top: 1.25rem;">
+                    <div class="card-title-action">
+                        <div class="card-title">
+                            <i data-lucide="database" class="text-amber"></i>
+                            <h3>RAW 데이터 관리 (일괄 입출력)</h3>
+                        </div>
+                        <div class="raw-tabs" style="display: flex; gap: 0.25rem;">
+                            <button type="button" class="btn btn-text btn-xs active" id="btn-raw-tab-stocks">보유 주식</button>
+                            <button type="button" class="btn btn-text btn-xs" id="btn-raw-tab-realized">매매 기록</button>
+                            <button type="button" class="btn btn-text btn-xs" id="btn-raw-tab-txs">가계부 내역</button>
+                            <button type="button" class="btn btn-text btn-xs" id="btn-raw-tab-json">전체 상태 (JSON)</button>
+                        </div>
+                    </div>
+                    
+                    <div class="raw-data-body">
+                        <div class="form-group">
+                            <label id="raw-data-label" for="raw-data-textarea" style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.25rem;">보유 주식 데이터 입력 (티커, 수량, 매수단가)</label>
+                            <div id="raw-acc-select-wrapper" style="margin-bottom: 0.5rem;">
+                                <label style="font-size: 0.7rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 0.15rem; display: block;">대상 계좌 선택</label>
+                                <select id="raw-acc-select" style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-family: Outfit; font-size: 0.75rem; padding: 0.25rem 0.4rem; outline: none; width: 100%;"></select>
+                            </div>
+                            <textarea id="raw-data-textarea" rows="4" placeholder="예시:&#10;AAPL,15,220000&#10;TSLA,25,265000&#10;NVDA,8,850000" class="raw-textarea" style="width: 100%; min-height: 100px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-family: monospace; font-size: 0.75rem; padding: 0.5rem; resize: vertical; outline: none;"></textarea>
+                            <p class="tax-info-text" id="raw-data-help" style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.25rem; line-height: 1.35;">
+                                * 한 줄에 하나씩 [티커, 수량, 매수단가] 형식으로 입력해 주세요. (쉼표 또는 공백으로 구분)
+                            </p>
+                        </div>
+                        
+                        <div class="raw-actions" style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.75rem;">
+                            <button type="button" class="btn btn-secondary btn-sm" id="btn-raw-export">현재 데이터 추출 (Export)</button>
+                            <button type="button" class="btn btn-amber btn-sm" id="btn-raw-import">데이터 적용 (Import)</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT COLUMN: VISUALIZATIONS & ANALYTICS -->
+            <section class="grid-col col-charts">
+                <!-- CHART 1: PORTFOLIO ALLOCATION DONUT -->
+                <div class="card chart-card">
+                    <div class="card-title-action" style="margin-bottom: 0.5rem; justify-content: space-between; align-items: center; width: 100%;">
+                        <div class="card-title" style="margin-bottom: 0;">
+                            <i data-lucide="pie-chart" class="text-indigo"></i>
+                            <h3>자산 분배 비중</h3>
+                        </div>
+                        <select id="donut-view-select" style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-family: Outfit; font-size: 0.75rem; padding: 0.15rem 0.35rem; outline: none; cursor: pointer;">
+                            <option value="all">전체 금융자산</option>
+                            <option value="stocks">주식 종목 비중</option>
+                            <option value="sectors">주식 자산군 비중</option>
+                        </select>
+                    </div>
+                    <div class="donut-chart-container">
+                        <div id="portfolio-donut-chart"></div>
+                        <div class="donut-center-total" id="donut-center-info">
+                            <span class="label">총 자산</span>
+                            <span class="val" id="donut-total-val">₩0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHART 2: BUDGET VS SPENT COMBO -->
+                <div class="card chart-card">
+                    <div class="card-title">
+                        <i data-lucide="sliders" class="text-amber"></i>
+                        <h3>예산 대비 실제 지출 (Monthly Flow)</h3>
+                    </div>
+                    <div class="chart-container">
+                        <div id="budget-combo-chart"></div>
+                    </div>
+                </div>
+
+                <!-- CHART 3: ASSET GROWTH TREND AREA -->
+                <div class="card chart-card">
+                    <div class="card-title">
+                        <i data-lucide="line-chart" class="text-emerald"></i>
+                        <h3>자산 증식 추이 (Growth Trend)</h3>
+                    </div>
+                    <div class="chart-container">
+                        <div id="asset-growth-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- BUDGET EDIT DIALOG / MODAL (Elegant Glassmorphism Overlay) -->
+    <div class="modal-overlay" id="budget-modal" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>주간 예산 변경</h3>
+                <button class="btn-close" id="btn-close-budget-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="budget-limit-input">주간 지출 목표 예산 (원화 ₩)</label>
+                    <input type="number" id="budget-limit-input" min="1000" step="1000" placeholder="예: 200000">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-budget-modal">취소</button>
+                <button class="btn btn-amber" id="btn-save-budget-modal">적용하기</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Lucide 아이콘 초기화
+        lucide.createIcons();
+    </script>
+</body>
+</html>

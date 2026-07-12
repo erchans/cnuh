@@ -146,25 +146,20 @@
         .logo-box {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            background: linear-gradient(135deg, #FFFFFF 0%, #F1F5F9 100%);
-            border: 1px solid rgba(10, 59, 115, 0.15);
-            padding: 8px 16px;
+            justify-content: center;
+            background: #FFFFFF;
+            border: 1px solid rgba(10, 59, 115, 0.12);
+            padding: 8px 20px;
             border-radius: var(--radius-pill);
-            box-shadow: 0 4px 10px rgba(10, 59, 115, 0.06);
-            margin-bottom: 18px;
+            box-shadow: 0 4px 12px rgba(10, 59, 115, 0.05);
+            margin-bottom: 22px;
         }
 
-        .logo-icon-svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .logo-text {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--cnuh-blue);
-            letter-spacing: 0.05em;
+        .logo-img {
+            height: 30px;
+            width: auto;
+            display: block;
+            object-fit: contain;
         }
 
         .title {
@@ -478,15 +473,9 @@
         
         <!-- Header Section -->
         <header class="header" id="main-header">
-            <!-- CNUH stylized brand badge -->
+            <!-- CNUH official logo image -->
             <div class="logo-box">
-                <!-- Custom CNUH style abstract flower/cross icon -->
-                <svg class="logo-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z" fill="#0A3B73" opacity="0.15"/>
-                    <path d="M12 7V17M7 12H17" stroke="#00A896" stroke-width="3" stroke-linecap="round"/>
-                    <circle cx="12" cy="12" r="3" fill="#0A3B73"/>
-                </svg>
-                <span class="logo-text">충남대학교병원</span>
+                <img src="images/cnuh_logo.png" alt="충남대학교병원 로고" class="logo-img">
             </div>
             
             <h1 class="title">병원생활 안내</h1>
@@ -498,15 +487,15 @@
         <!-- Main Cards List -->
         <main class="menu-list">
             
-            <!-- Card 1: 환자이동방법 -->
+            <!-- Card 1: 안전한 환자이송 -->
             <a href="https://drive.google.com/file/d/1q3mBPe-dbLXVIcSutDsPFi9QBuGY70-v/view" target="_blank" rel="noopener noreferrer" class="menu-card card-blue" id="btn-patient-movement">
                 <div class="icon-container icon-blue">
                     <!-- Custom generated illustration for patient mobility -->
-                    <img src="images/patient_mobility.png" alt="환자이동방법 아이콘" class="card-icon-img">
+                    <img src="images/patient_mobility.png" alt="안전한 환자이송 아이콘" class="card-icon-img">
                 </div>
                 <div class="card-details">
                     <span class="card-badge badge-blue">매뉴얼 가이드</span>
-                    <h2 class="card-title">환자이동방법</h2>
+                    <h2 class="card-title">안전한 환자이송</h2>
                     <p class="card-desc">안전하고 올바른 낙상 방지 환자 이송법</p>
                 </div>
                 <div class="arrow-circle">
@@ -516,7 +505,7 @@
                 </div>
             </a>
 
-            <!-- Card 2: 네뷸라이저 사용법 교육동영상 -->
+            <!-- Card 2: 네뷸라이저 -->
             <a href="https://drive.google.com/file/d/1eoJc8I47B7dUMKpOZ_JBbqonAZGYNgzc/view" target="_blank" rel="noopener noreferrer" class="menu-card card-teal" id="btn-nebulizer-guide">
                 <div class="icon-container icon-teal">
                     <!-- Custom generated illustration for nebulizer guide -->
@@ -524,7 +513,7 @@
                 </div>
                 <div class="card-details">
                     <span class="card-badge badge-teal">교육 동영상</span>
-                    <h2 class="card-title">네뷸라이저 사용법 교육동영상</h2>
+                    <h2 class="card-title">네뷸라이저 사용법</h2>
                     <p class="card-desc">영상을 통해 배우는 올바른 흡입 치료</p>
                 </div>
                 <div class="arrow-circle">
@@ -552,16 +541,16 @@
                 </div>
             </a>
 
-            <!-- Card 4: 간호간병통합서비스 안내 -->
-            <a href="https://m.site.naver.com/1Ykuv" target="_blank" rel="noopener noreferrer" class="menu-card card-purple" id="btn-nursing-service">
+            <!-- Card 4: 내가먹는약 한눈에 서비스 -->
+            <a href="https://pf.kakao.com/_GxfTMxj" target="_blank" rel="noopener noreferrer" class="menu-card card-purple" id="btn-medicine-guide">
                 <div class="icon-container icon-purple">
-                    <!-- Custom generated illustration for nursing care -->
-                    <img src="images/nursing_care.png" alt="간호간병통합서비스 아이콘" class="card-icon-img">
+                    <!-- Custom generated illustration for medicine guide -->
+                    <img src="images/medicine_guide.png" alt="내가먹는약 한눈에 서비스 아이콘" class="card-icon-img">
                 </div>
                 <div class="card-details">
-                    <span class="card-badge badge-purple">공식 안내 서비스</span>
-                    <h2 class="card-title">간호간병통합서비스 안내</h2>
-                    <p class="card-desc">보호자가 필요 없는 원스톱 전문 안심 간병</p>
+                    <span class="card-badge badge-purple">복약 안내 서비스</span>
+                    <h2 class="card-title">내가먹는약 한눈에 서비스</h2>
+                    <p class="card-desc">복용 중인 약의 성분과 복용 정보를 한눈에</p>
                 </div>
                 <div class="arrow-circle">
                     <svg class="arrow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
