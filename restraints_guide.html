@@ -206,13 +206,13 @@
 
         .slider-wrapper {
             display: flex;
-            width: 500%; /* 5 pages */
+            width: 600%; /* 6 pages */
             height: 100%;
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .slide {
-            width: 20%;
+            width: 16.6666%; /* 1/6 page */
             height: 100%;
             flex-shrink: 0;
             display: flex;
@@ -492,6 +492,7 @@
         <!-- Main Image Slider (Fully edge-to-edge) -->
         <div class="slider-container">
             <div class="slider-wrapper" id="slider-wrapper">
+                <div class="slide"><img src="images/restraints_0.jpg" alt="신체보호대 가이드 0" class="guide-pdf-img"></div>
                 <div class="slide"><img src="images/restraints_1.jpg" alt="신체보호대 가이드 1" class="guide-pdf-img"></div>
                 <div class="slide"><img src="images/restraints_2.jpg" alt="신체보호대 가이드 2" class="guide-pdf-img"></div>
                 <div class="slide"><img src="images/restraints_3.jpg" alt="신체보호대 가이드 3" class="guide-pdf-img"></div>
@@ -511,6 +512,7 @@
             
             <div class="slider-dots" id="slider-dots">
                 <span class="dot active"></span>
+                <span class="dot"></span>
                 <span class="dot"></span>
                 <span class="dot"></span>
                 <span class="dot"></span>
@@ -561,11 +563,11 @@
             const dots = document.querySelectorAll('.dot');
             const slides = document.querySelectorAll('.slide');
             let currentSlide = 0;
-            const totalSlides = 5;
+            const totalSlides = 6;
 
             function updateSlider() {
                 // Slide transaction
-                wrapper.style.transform = `translateX(-${currentSlide * 20}%)`;
+                wrapper.style.transform = `translateX(-${currentSlide * 16.6666}%)`;
                 
                 // Reset scroll positions of all slides when moving between them
                 slides.forEach(slide => {
