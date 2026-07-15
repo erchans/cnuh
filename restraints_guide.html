@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>신체보호대 관련 낙상 안내 | 충남대학교병원</title>
     <meta name="description" content="충남대학교병원 신체보호대 사용 시 안전 수칙 및 낙상 예방 가이드 그림 안내 페이지입니다.">
     
@@ -186,21 +186,21 @@
             object-fit: contain;
         }
 
-        /* Image Slider Wrapper */
+        /* Image Slider Wrapper (Streched edge-to-edge) */
         .slider-container {
             position: relative;
             z-index: 2;
-            width: 100%;
+            width: calc(100% + 40px); /* Break out of app-container padding */
+            margin-left: -20px;
+            margin-right: -20px;
             overflow: hidden;
-            border-radius: var(--radius-inner);
-            box-shadow: var(--shadow-md);
-            border: 1px solid rgba(10, 59, 115, 0.08);
-            background-color: #FFFFFF;
+            background-color: #F1F5F9;
             margin-bottom: 16px;
             flex-grow: 1;
             display: flex;
-            align-items: center;
-            min-height: 420px;
+            align-items: stretch;
+            min-height: 440px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
             animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
@@ -208,7 +208,6 @@
             display: flex;
             width: 500%; /* 5 pages */
             height: 100%;
-            align-items: center;
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -217,21 +216,20 @@
             height: 100%;
             flex-shrink: 0;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 6px;
+            justify-content: flex-start;
+            overflow-y: auto; /* Allow vertical scrolling inside the slide */
+            padding: 0;
             user-select: none;
+            -webkit-overflow-scrolling: touch; /* Smooth iOS scroll inertia */
+            cursor: zoom-in;
         }
 
         .guide-pdf-img {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
+            width: 100%;
             height: auto;
-            object-fit: contain;
-            border-radius: 12px;
             display: block;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
         }
 
         /* Slider Controls */
@@ -303,6 +301,84 @@
             transform: scale(1.2);
             width: 14px;
             border-radius: 4px;
+        }
+
+        /* Fullscreen Zoom Modal Styling */
+        .zoom-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.96);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            user-select: none;
+        }
+
+        .zoom-close {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            color: #FFFFFF;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1001;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .zoom-close:active {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(0.9);
+        }
+
+        .zoom-content-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+            padding: 20px;
+        }
+
+        .zoom-img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-origin: center center;
+            cursor: zoom-out;
+        }
+
+        .zoom-tip {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 13px;
+            font-weight: 500;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 30px;
+            pointer-events: none;
+            text-align: center;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         /* Footer Section */
@@ -413,7 +489,7 @@
             </div>
         </header>
 
-        <!-- Main Image Slider -->
+        <!-- Main Image Slider (Fully edge-to-edge) -->
         <div class="slider-container">
             <div class="slider-wrapper" id="slider-wrapper">
                 <div class="slide"><img src="images/restraints_1.jpg" alt="신체보호대 가이드 1" class="guide-pdf-img"></div>
@@ -466,29 +542,42 @@
 
     </div>
 
-    <!-- Carousel Controller JavaScript -->
+    <!-- Fullscreen Zoom Modal (Hidden by default) -->
+    <div id="zoom-modal" class="zoom-modal">
+        <span class="zoom-close" id="zoom-close">&times;</span>
+        <div class="zoom-content-wrapper">
+            <img id="zoom-img" src="" alt="확대 이미지" class="zoom-img">
+        </div>
+        <div class="zoom-tip">두 번 탭하여 확대/축소할 수 있습니다</div>
+    </div>
+
+    <!-- Slider & Zoom Modal Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Slider configurations
             const wrapper = document.getElementById('slider-wrapper');
             const prevBtn = document.getElementById('prev-btn');
             const nextBtn = document.getElementById('next-btn');
             const dots = document.querySelectorAll('.dot');
+            const slides = document.querySelectorAll('.slide');
             let currentSlide = 0;
             const totalSlides = 5;
 
             function updateSlider() {
-                // Perform the slide transition (x axis offset by percentage)
+                // Slide transaction
                 wrapper.style.transform = `translateX(-${currentSlide * 20}%)`;
                 
-                // Disable previous button on first slide
+                // Reset scroll positions of all slides when moving between them
+                slides.forEach(slide => {
+                    slide.scrollTop = 0;
+                });
+
                 prevBtn.disabled = currentSlide === 0;
                 
-                // Update active indicator dot
                 dots.forEach((dot, index) => {
                     dot.classList.toggle('active', index === currentSlide);
                 });
 
-                // Change Next text to "완료" (Done) on the last slide
                 if (currentSlide === totalSlides - 1) {
                     nextBtn.innerHTML = `
                         <span>완료</span>
@@ -518,12 +607,11 @@
                     currentSlide++;
                     updateSlider();
                 } else {
-                    // Redirect back to fall prevention index when complete
                     window.location.href = 'fall_prevention.html';
                 }
             });
 
-            // Touch event handling for mobile swipe gesture support
+            // Touch event handling for slider swiping (ignored if target is zooming/zoomed)
             let startX = 0;
             let endX = 0;
             
@@ -537,21 +625,69 @@
             }, { passive: true });
 
             function handleSwipe() {
-                const threshold = 55; // swipe minimum distance in pixels
+                const threshold = 55;
                 if (startX - endX > threshold) {
-                    // Swiped left -> Show next slide
                     if (currentSlide < totalSlides - 1) {
                         currentSlide++;
                         updateSlider();
                     }
                 } else if (endX - startX > threshold) {
-                    // Swiped right -> Show previous slide
                     if (currentSlide > 0) {
                         currentSlide--;
                         updateSlider();
                     }
                 }
             }
+
+            // --- Fullscreen Zoom Modal Logic ---
+            const modal = document.getElementById('zoom-modal');
+            const zoomImg = document.getElementById('zoom-img');
+            const closeBtn = document.getElementById('zoom-close');
+            const slideImages = document.querySelectorAll('.guide-pdf-img');
+
+            // Open Modal on Image click
+            slideImages.forEach(img => {
+                img.addEventListener('click', () => {
+                    zoomImg.src = img.src;
+                    modal.style.display = 'flex';
+                    zoomScale = 1;
+                    zoomImg.style.transform = `scale(1)`;
+                    zoomImg.style.cursor = 'zoom-in';
+                });
+            });
+
+            // Close Modal
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            modal.addEventListener('click', (e) => {
+                // Close modal if background clicked
+                if (e.target === modal || e.target === document.querySelector('.zoom-content-wrapper')) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Double Tap to Zoom Toggle inside Modal
+            let lastTap = 0;
+            let zoomScale = 1;
+            zoomImg.addEventListener('click', (e) => {
+                const currentTime = new Date().getTime();
+                const tapLength = currentTime - lastTap;
+                if (tapLength < 300 && tapLength > 0) {
+                    if (zoomScale === 1) {
+                        zoomScale = 2.2;
+                        zoomImg.style.transform = `scale(2.2)`;
+                        zoomImg.style.cursor = 'zoom-out';
+                    } else {
+                        zoomScale = 1;
+                        zoomImg.style.transform = `scale(1)`;
+                        zoomImg.style.cursor = 'zoom-in';
+                    }
+                    e.preventDefault();
+                }
+                lastTap = currentTime;
+            });
         });
     </script>
 </body>
