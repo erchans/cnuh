@@ -115,7 +115,7 @@
             position: relative;
             z-index: 2;
             margin-top: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
             text-align: center;
             animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -176,7 +176,7 @@
             padding: 8px 20px;
             border-radius: var(--radius-pill);
             box-shadow: 0 4px 12px rgba(10, 59, 115, 0.05);
-            margin-bottom: 12px;
+            margin-bottom: 4px;
         }
 
         .logo-img {
@@ -186,72 +186,123 @@
             object-fit: contain;
         }
 
-        /* Image Viewer Area */
-        .image-wrapper {
+        /* Image Slider Wrapper */
+        .slider-container {
             position: relative;
             z-index: 2;
             width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-grow: 1;
-            margin-bottom: 24px;
-            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        .guide-pdf-img {
-            width: 100%;
-            max-width: 100%;
-            height: auto;
+            overflow: hidden;
             border-radius: var(--radius-inner);
             box-shadow: var(--shadow-md);
             border: 1px solid rgba(10, 59, 115, 0.08);
-            display: block;
+            background-color: #FFFFFF;
+            margin-bottom: 16px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            min-height: 420px;
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* Custom Placeholder */
-        .placeholder-container {
-            width: 100%;
-            background-color: #FFFFFF;
-            border: 2px dashed rgba(10, 59, 115, 0.15);
-            border-radius: var(--radius-card);
-            padding: 60px 20px;
+        .slider-wrapper {
             display: flex;
-            flex-direction: column;
+            width: 500%; /* 5 pages */
+            height: 100%;
+            align-items: center;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .slide {
+            width: 20%;
+            height: 100%;
+            flex-shrink: 0;
+            display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
+            padding: 6px;
+            user-select: none;
+        }
+
+        .guide-pdf-img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 12px;
+            display: block;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Slider Controls */
+        .slider-controls {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 24px;
+            background-color: #FFFFFF;
+            padding: 12px 18px;
+            border-radius: 50px;
+            border: 1px solid rgba(10, 59, 115, 0.08);
             box-shadow: var(--shadow-sm);
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        .placeholder-icon {
-            width: 54px;
-            height: 54px;
-            stroke: var(--cnuh-teal);
-            margin-bottom: 20px;
-            opacity: 0.7;
-        }
-
-        .placeholder-title {
-            font-size: 19px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 10px;
-        }
-
-        .placeholder-text {
-            font-size: 13px;
-            color: var(--text-mute);
-            line-height: 1.6;
-        }
-
-        .highlight-text {
+        .slider-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
             color: var(--cnuh-blue);
+            font-size: 15px;
             font-weight: 700;
-            background-color: rgba(10, 59, 115, 0.05);
-            padding: 2px 6px;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: var(--radius-pill);
+            transition: var(--transition);
+        }
+
+        .slider-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .slider-btn:active {
+            background-color: rgba(10, 59, 115, 0.06);
+            transform: scale(0.95);
+        }
+
+        .slider-btn:disabled {
+            color: var(--text-mute);
+            opacity: 0.35;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .slider-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #E2E8F0;
+            transition: var(--transition);
+        }
+
+        .dot.active {
+            background-color: var(--cnuh-teal);
+            transform: scale(1.2);
+            width: 14px;
             border-radius: 4px;
-            font-family: monospace;
         }
 
         /* Footer Section */
@@ -349,7 +400,7 @@
         <header class="header" id="main-header">
             <div class="header-nav">
                 <a href="fall_prevention.html" class="back-button" id="btn-back">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
@@ -362,27 +413,40 @@
             </div>
         </header>
 
-        <!-- Main Image Viewer -->
-        <div class="image-wrapper">
-            <!-- Displays image, falls back to placeholder if image fails to load (e.g. before user uploads it) -->
-            <img src="images/restraints_guide.png" alt="신체보호대 관련 낙상 안내 가이드" class="guide-pdf-img" onerror="this.style.display='none'; document.getElementById('placeholder-box').style.display='flex';">
-            
-            <div id="placeholder-box" class="placeholder-container" style="display: none;">
-                <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/>
-                    <line x1="16" y1="17" x2="8" y2="17"/>
-                    <polyline points="10 9 9 9 8 9"/>
-                </svg>
-                <h2 class="placeholder-title">안내 이미지 대기 중</h2>
-                <p class="placeholder-text">
-                    신체보호대 안내 이미지 파일을 등록해 주세요.<br>
-                    규격에 맞는 이미지를 준비한 후, 파일명을<br>
-                    <span class="highlight-text">restraints_guide.png</span> 로 저장하여<br>
-                    <span class="highlight-text">images/</span> 폴더에 추가하면 자동으로 노출됩니다.
-                </p>
+        <!-- Main Image Slider -->
+        <div class="slider-container">
+            <div class="slider-wrapper" id="slider-wrapper">
+                <div class="slide"><img src="images/restraints_1.jpg" alt="신체보호대 가이드 1" class="guide-pdf-img"></div>
+                <div class="slide"><img src="images/restraints_2.jpg" alt="신체보호대 가이드 2" class="guide-pdf-img"></div>
+                <div class="slide"><img src="images/restraints_3.jpg" alt="신체보호대 가이드 3" class="guide-pdf-img"></div>
+                <div class="slide"><img src="images/restraints_4.jpg" alt="신체보호대 가이드 4" class="guide-pdf-img"></div>
+                <div class="slide"><img src="images/restraints_5.jpg" alt="신체보호대 가이드 5" class="guide-pdf-img"></div>
             </div>
+        </div>
+
+        <!-- Slider Controls -->
+        <div class="slider-controls">
+            <button class="slider-btn" id="prev-btn" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                <span>이전</span>
+            </button>
+            
+            <div class="slider-dots" id="slider-dots">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+            
+            <button class="slider-btn" id="next-btn">
+                <span>다음</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
         </div>
 
         <!-- Footer Section -->
@@ -402,5 +466,93 @@
 
     </div>
 
+    <!-- Carousel Controller JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const wrapper = document.getElementById('slider-wrapper');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const dots = document.querySelectorAll('.dot');
+            let currentSlide = 0;
+            const totalSlides = 5;
+
+            function updateSlider() {
+                // Perform the slide transition (x axis offset by percentage)
+                wrapper.style.transform = `translateX(-${currentSlide * 20}%)`;
+                
+                // Disable previous button on first slide
+                prevBtn.disabled = currentSlide === 0;
+                
+                // Update active indicator dot
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentSlide);
+                });
+
+                // Change Next text to "완료" (Done) on the last slide
+                if (currentSlide === totalSlides - 1) {
+                    nextBtn.innerHTML = `
+                        <span>완료</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    `;
+                } else {
+                    nextBtn.innerHTML = `
+                        <span>다음</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    `;
+                }
+            }
+
+            prevBtn.addEventListener('click', () => {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    updateSlider();
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (currentSlide < totalSlides - 1) {
+                    currentSlide++;
+                    updateSlider();
+                } else {
+                    // Redirect back to fall prevention index when complete
+                    window.location.href = 'fall_prevention.html';
+                }
+            });
+
+            // Touch event handling for mobile swipe gesture support
+            let startX = 0;
+            let endX = 0;
+            
+            wrapper.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+            }, { passive: true });
+            
+            wrapper.addEventListener('touchend', (e) => {
+                endX = e.changedTouches[0].clientX;
+                handleSwipe();
+            }, { passive: true });
+
+            function handleSwipe() {
+                const threshold = 55; // swipe minimum distance in pixels
+                if (startX - endX > threshold) {
+                    // Swiped left -> Show next slide
+                    if (currentSlide < totalSlides - 1) {
+                        currentSlide++;
+                        updateSlider();
+                    }
+                } else if (endX - startX > threshold) {
+                    // Swiped right -> Show previous slide
+                    if (currentSlide > 0) {
+                        currentSlide--;
+                        updateSlider();
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
